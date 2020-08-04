@@ -1,10 +1,15 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
+
+    delegate void Del();
+    Del del;
+    
     Rigidbody2D rb;
     public float speed = 1;
     float direction;
@@ -20,6 +25,15 @@ public class Player : MonoBehaviour
     public static Player instance;
     int currentScene = 0;
     GameManager gm;
+    public List<IEnumerator> list;
+
+   
+    List<Action> actions = new List<Action>();
+
+
+    private void DequeueTasks(){
+        
+    }
 
     void Awake(){
         if(instance == null){
@@ -33,6 +47,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        list = new List<IEnumerator>();
         gm = GameManager.instance;
         startPosition = target = transform.position;
         rb = GetComponent<Rigidbody2D>();
@@ -46,21 +61,27 @@ public class Player : MonoBehaviour
        // transform.position = Vector3.Lerp(startPosition, target, t);
     }
 
-   public void MoveLeft(float speed, float distance){
-       distance = distance/5;
-        target = transform.position + new Vector3(-distance,0,0);
-        StartCoroutine(MoveToPosition(transform, target, distance/speed, speed));
 
+  public void Move(float speed, float distance){
+        if(distance < 0)
+            MoveLeft(speed,distance);     
+        else
+            MoveRight(speed,distance);
+    }
+
+   public void MoveLeft(float speed, float distance){
+        distance = distance/5;
+        list.Add(MoveToPosition(transform, -(distance)/speed, speed, distance));    
+        Debug.Log("Dodano akcje");
         
     }
 
     public void MoveRight(float speed, float distance){
         distance = distance/5;
-         target = transform.position + new Vector3(distance,0,0);
-        StartCoroutine(MoveToPosition(transform, target, distance/speed, speed));
+        list.Add(MoveToPosition(transform,distance/speed, speed, distance));    
+        Debug.Log("Dodano akcje");
     }
-
-    public void Jump(float power, float angle){
+    public IEnumerator Jumpp(float power, float angle){
         Vector3 dir = new Vector3(0,0,0);
 
         if(angle >= 0)
@@ -70,10 +91,23 @@ public class Player : MonoBehaviour
              dir = Quaternion.AngleAxis(angle, Vector3.forward) * Vector3.left;
         
          rb.AddForce(dir*power*50);
+        yield return new WaitForSeconds(0.1f);
+         while(!isGrounded){
+            yield return null;
+         }
+         yield return null;
+          
     }
 
-    public IEnumerator MoveToPosition(Transform transform, Vector3 position, float timeToMove, float speed)
+    public void Jump(float power, float angle){
+        list.Add(Jumpp(power, angle));
+        Debug.Log("Dodano skok");
+    }
+
+    public IEnumerator MoveToPosition(Transform transform, float timeToMove, float speed, float distance)
    {
+      Debug.Log(distance);
+      Vector3 position = transform.position + new Vector3(distance,0,0);
       var currentPos = transform.position;
       var t = 0f;
        while(t < 1)
@@ -84,11 +118,25 @@ public class Player : MonoBehaviour
                  rb.AddForce(dir*speed*50);
                  break;
              }
-                
+             Debug.Log("lol");
              t += Time.deltaTime / timeToMove;
              transform.position = Vector3.Lerp(currentPos, position, t);
              yield return null;
       }
+    }
+    public void Sequence()
+    {
+        StartCoroutine(GO());
+    }
+
+    public IEnumerator GO(){
+        foreach(IEnumerator func in list){
+            yield return StartCoroutine(func);
+            Debug.Log(func);
+            yield return new WaitForSeconds(0.2f);
+        }
+
+        list.Clear();
     }
 
     void OnCollisionEnter2D(Collision2D col){

@@ -38,9 +38,8 @@ public class MoveCard : MonoBehaviour
     }
 
     public void DecreaseDistance(){
-        if(distance>0){
             distance--;
             distanceValue.text = distance.ToString();
         }
     }
-}
+

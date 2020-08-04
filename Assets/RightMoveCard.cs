@@ -6,7 +6,7 @@ using TMPro;
 public class RightMoveCard : MoveCard
 {
     public void MoveRight(){
-        if(distance>0 && speed>0)
-            player.MoveRight(speed,distance);
+        if(speed>0 && distance != 0)
+            player.Move(speed,distance);
     }
 }
