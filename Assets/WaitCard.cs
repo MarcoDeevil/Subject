@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class WaitCard : MonoBehaviour
 {
 
     public float time;
     public TextMeshProUGUI timeValue;
+    public Slider slider;
 
     protected Player player;
     // Start is called before the first frame update
@@ -19,18 +21,8 @@ public class WaitCard : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-    }
-
-    public void IncreaseTime(){
-        time++;
-        timeValue.text = time.ToString();
-    }
-
-    public void DecreaseTime(){
-        if(time > 0)
-            time--;
-        timeValue.text = time.ToString();
+        time = slider.value;
+        timeValue.text = ((int)time).ToString();        
     }
 
     public void Wait(){

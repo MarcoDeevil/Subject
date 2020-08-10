@@ -106,7 +106,7 @@ public class Player : MonoBehaviour
     }
 
    public void MoveLeft(float speed, float distance){
-        distance = distance/5;    
+        float newDistance = distance/5;
         Debug.Log("Dodano akcje"); 
         GameObject newButton = Instantiate(MoveChosenCard) as GameObject;
         newButton.GetComponent<RectTransform>().localPosition = new Vector3(posX[freeButtonMovePosition], posY, 0);
@@ -116,23 +116,23 @@ public class Player : MonoBehaviour
         Button siema = newButton.transform.Find("Button").gameObject.GetComponent<Button>();
         Debug.Log(siema);
         siema.onClick.AddListener(() => RearangeChosenMovesButtons(newButton));
-        MoveButton x = new MoveButton(freeButtonMovePosition, newButton, "moveLeft" ,transform, speed, distance, 0, 0, 0);
+        MoveButton x = new MoveButton(freeButtonMovePosition, newButton, "moveLeft" ,transform, speed, newDistance, 0, 0, 0);
         chosenMovesButtons.Add(x);
         freeButtonMovePosition++;    
     }
 
     public void MoveRight(float speed, float distance){
-        distance = distance/5;   
+        float newDistance = distance/5;
         Debug.Log("Dodano akcje");
         GameObject newButton = Instantiate(MoveChosenCard) as GameObject;
         newButton.GetComponent<RectTransform>().localPosition = new Vector3(posX[freeButtonMovePosition], posY, 0);
-        newButton.transform.Find("ChosenCardMove/SpeedValue").gameObject.GetComponent<TextMeshProUGUI>().text = speed.ToString();
-        newButton.transform.Find("ChosenCardMove/DistanceValue").gameObject.GetComponent<TextMeshProUGUI>().text = distance.ToString();
+        newButton.transform.Find("ChosenCardMove/SpeedValue").gameObject.GetComponent<TextMeshProUGUI>().text = ((int)speed).ToString();
+        newButton.transform.Find("ChosenCardMove/DistanceValue").gameObject.GetComponent<TextMeshProUGUI>().text = ((int)distance).ToString();
         newButton.transform.SetParent(Canvas.transform, false);
         Button siema = newButton.transform.Find("Button").gameObject.GetComponent<Button>();
         Debug.Log(siema);
         siema.onClick.AddListener(() => RearangeChosenMovesButtons(newButton));
-        MoveButton x = new MoveButton(freeButtonMovePosition, newButton, "moveRight" ,transform, speed, distance, 0, 0, 0);
+        MoveButton x = new MoveButton(freeButtonMovePosition, newButton, "moveRight" ,transform, (int)speed, (int)newDistance, 0, 0, 0);
         chosenMovesButtons.Add(x);
         freeButtonMovePosition++;
     }
@@ -142,12 +142,12 @@ public class Player : MonoBehaviour
         Debug.Log("Dodano skok");
         GameObject newButton = Instantiate(JumpChosenCard) as GameObject;
         newButton.GetComponent<RectTransform>().localPosition = new Vector3(posX[freeButtonMovePosition], posY, 0);
-        newButton.transform.Find("ChosenCardJump/PowerValue").gameObject.GetComponent<TextMeshProUGUI>().text = power.ToString();
-        newButton.transform.Find("ChosenCardJump/AngleValue").gameObject.GetComponent<TextMeshProUGUI>().text = angle.ToString();
+        newButton.transform.Find("ChosenCardJump/PowerValue").gameObject.GetComponent<TextMeshProUGUI>().text = ((int)power).ToString();
+        newButton.transform.Find("ChosenCardJump/AngleValue").gameObject.GetComponent<TextMeshProUGUI>().text = ((int)angle).ToString();
         newButton.transform.SetParent(Canvas.transform, false);
         Button siema = newButton.transform.Find("Button").gameObject.GetComponent<Button>();
         siema.onClick.AddListener(() => RearangeChosenMovesButtons(newButton));
-        MoveButton x = new MoveButton(freeButtonMovePosition, newButton, "jump" ,null, 0, 0, 0, power, angle);
+        MoveButton x = new MoveButton(freeButtonMovePosition, newButton, "jump" ,null, 0, 0, 0, (int)power, (int)angle);
         chosenMovesButtons.Add(x);
         freeButtonMovePosition++;
         
@@ -158,11 +158,11 @@ public class Player : MonoBehaviour
         Debug.Log("dodano czekanie");
         GameObject newButton = Instantiate(WaitChosenCard) as GameObject;
         newButton.GetComponent<RectTransform>().localPosition = new Vector3(posX[freeButtonMovePosition], posY, 0);
-        newButton.transform.Find("ChosenCardWait/TimeValue").gameObject.GetComponent<TextMeshProUGUI>().text = time.ToString();
+        newButton.transform.Find("ChosenCardWait/TimeValue").gameObject.GetComponent<TextMeshProUGUI>().text = ((int)time).ToString();
         newButton.transform.SetParent(Canvas.transform, false);
         Button siema = newButton.transform.Find("Button").gameObject.GetComponent<Button>();
         siema.onClick.AddListener(() => RearangeChosenMovesButtons(newButton));
-        MoveButton x = new MoveButton(freeButtonMovePosition, newButton, "wait" ,null, 0, 0, time, 0, 0);
+        MoveButton x = new MoveButton(freeButtonMovePosition, newButton, "wait" ,null, 0, 0, (int)time, 0, 0);
         chosenMovesButtons.Add(x);
         freeButtonMovePosition++;
         

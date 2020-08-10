@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class JumpCard : MonoBehaviour
 {
@@ -10,6 +11,8 @@ public class JumpCard : MonoBehaviour
     public TextMeshProUGUI angleValue;
     public TextMeshProUGUI powerValue;
     protected Player player;
+    public Slider sliderPower;
+    public Slider sliderAngle;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,29 +22,10 @@ public class JumpCard : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-    }
-
-    public void IncreaseAngle(){
-        angle+=5;
-        angleValue.text = angle.ToString();
-    }
-
-    public void DecreaseAngle(){
-         angle-=5;
-        angleValue.text = angle.ToString();
-    }
-
-     public void Increasepower(){
-        power++;
-        powerValue.text = power.ToString();
-    }
-
-    public void Decreasepower(){
-        if(power>0){
-            power--;
-            powerValue.text = power.ToString();
-        }
+        power = sliderPower.value;
+        angle = sliderAngle.value;
+        angleValue.text = ((int)angle).ToString();
+        powerValue.text = ((int)power).ToString();
     }
 
     public void Jump(){
