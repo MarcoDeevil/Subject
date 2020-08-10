@@ -45,6 +45,9 @@ public class JumpCard : MonoBehaviour
     }
 
     public void Jump(){
-        player.Jump(power, angle);
+        if(power > 0 && angle !=0)
+            player.Jump(power, angle);
+        else
+            Debug.Log("Za mały power lub angle");
     }
 }

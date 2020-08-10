@@ -40,6 +40,14 @@ public class MoveCard : MonoBehaviour
     public void DecreaseDistance(){
             distance--;
             distanceValue.text = distance.ToString();
-        }
     }
+
+    public void Move(){
+        if(speed>0 && distance != 0)
+            player.Move(speed,distance);
+        else
+            Debug.Log("Za mały speed lub distance");
+    }
+
+}
 

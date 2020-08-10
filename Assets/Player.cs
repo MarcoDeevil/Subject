@@ -26,6 +26,9 @@ public class Player : MonoBehaviour
     int currentScene = 0;
     GameManager gm;
     public List<IEnumerator> list;
+    bool dead = false;
+
+    public Vector3 spawn;
 
    
     List<Action> actions = new List<Action>();
@@ -37,7 +40,7 @@ public class Player : MonoBehaviour
 
     void Awake(){
         if(instance == null){
-                DontDestroyOnLoad(gameObject);
+                //DontDestroyOnLoad(gameObject);
                 instance = this;     
             }
             else {
@@ -63,6 +66,7 @@ public class Player : MonoBehaviour
 
 
   public void Move(float speed, float distance){
+        dead = false;
         if(distance < 0)
             MoveLeft(speed,distance);     
         else
@@ -72,8 +76,7 @@ public class Player : MonoBehaviour
    public void MoveLeft(float speed, float distance){
         distance = distance/5;
         list.Add(MoveToPosition(transform, -(distance)/speed, speed, distance));    
-        Debug.Log("Dodano akcje");
-        
+        Debug.Log("Dodano akcje");     
     }
 
     public void MoveRight(float speed, float distance){
@@ -81,7 +84,20 @@ public class Player : MonoBehaviour
         list.Add(MoveToPosition(transform,distance/speed, speed, distance));    
         Debug.Log("Dodano akcje");
     }
-    public IEnumerator Jumpp(float power, float angle){
+
+    public void Jump(float power, float angle){
+        dead = false;
+        list.Add(JumpAction(power, angle));
+        Debug.Log("Dodano skok");
+    }
+
+    public void Wait(float time){
+        dead = false;
+        list.Add(WaitAction(time));
+        Debug.Log("dodano czekanie");
+    }
+
+    IEnumerator JumpAction(float power, float angle){
         Vector3 dir = new Vector3(0,0,0);
 
         if(angle >= 0)
@@ -99,31 +115,37 @@ public class Player : MonoBehaviour
           
     }
 
-    public void Jump(float power, float angle){
-        list.Add(Jumpp(power, angle));
-        Debug.Log("Dodano skok");
+    IEnumerator WaitAction(float time){
+        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(time);
     }
 
-    public IEnumerator MoveToPosition(Transform transform, float timeToMove, float speed, float distance)
-   {
+    
+
+    IEnumerator MoveToPosition(Transform transform, float timeToMove, float speed, float distance)
+    {
       Debug.Log(distance);
       Vector3 position = transform.position + new Vector3(distance,0,0);
       var currentPos = transform.position;
       var t = 0f;
        while(t < 1)
        {
+            if(dead)
+                break;            
              if(isGrounded == false){
                  Vector3 dir = new Vector3(0,0,0);
                  dir = Quaternion.AngleAxis(0, Vector3.forward) * Vector3.right;
                  rb.AddForce(dir*speed*50);
                  break;
              }
+             
              Debug.Log("lol");
              t += Time.deltaTime / timeToMove;
              transform.position = Vector3.Lerp(currentPos, position, t);
              yield return null;
       }
     }
+    
     public void Sequence()
     {
         StartCoroutine(GO());
@@ -131,8 +153,12 @@ public class Player : MonoBehaviour
 
     public IEnumerator GO(){
         foreach(IEnumerator func in list){
+            if(dead)
+                break;
             yield return StartCoroutine(func);
             Debug.Log(func);
+            if(dead)
+                break;
             yield return new WaitForSeconds(0.2f);
         }
 
@@ -141,8 +167,15 @@ public class Player : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D col){
         if(col.gameObject.tag == "Bound"){  
-            Destroy(gameObject);     
-            gm.restartScene();           
+            dead = true;
+            transform.position = spawn;
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = 0; 
+            list.Clear();
+            //Instantiate(this, spawn, this.transform.rotation);  
+            //Destroy(gameObject);
+               
+           // gm.restartScene();           
         }
         
         else if(col.gameObject.tag == "Finish"){

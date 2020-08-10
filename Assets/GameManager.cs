@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
         currentScene++;
         SceneManager.LoadScene(currentScene);
     }
-    public void restartScene(){
-        SceneManager.LoadScene(currentScene);
-    }
+   // public void restartScene(){
+    //    SceneManager.LoadScene(currentScene);
+    //}
 }
