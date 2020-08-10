@@ -28,26 +28,6 @@ public class MoveCard : MonoBehaviour
         speedValue.text = ((int)speed).ToString();
     }
 
-    public void IncreaseSpeed(){
-        speed++;
-        speedValue.text = speed.ToString();
-    }
-
-    public void DecreaseSpeed(){
-         speed--;
-        speedValue.text = speed.ToString();
-    }
-
-     public void IncreaseDistance(){
-        distance++;
-        distanceValue.text = distance.ToString();
-    }
-
-    public void DecreaseDistance(){
-            distance--;
-            distanceValue.text = distance.ToString();
-    }
-
     public void Move(){
         if(speed>0 && distance != 0)
             player.Move(speed,distance);
