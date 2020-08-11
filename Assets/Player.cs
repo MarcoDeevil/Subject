@@ -17,6 +17,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     public List<MoveButton> chosenMovesButtons;  
     GameObject currentChangedObject;
+    public GameObject panelInGame;
 
     public GameObject CoverButton;
     public GameObject ChangeWaitCard;
@@ -260,11 +261,12 @@ public class Player : MonoBehaviour
 
     public IEnumerator GO(){
         isRunning = true;
+        panelInGame.SetActive(true);
         foreach(MoveButton func in chosenMovesButtons){
 
             if(dead)
                 break; 
-
+            func.obj.GetComponent<Image>().color = new Color(0.33f, 0.75f, 0.16f, 0.65f);
             if(func.action == "wait")
                 yield return StartCoroutine(WaitAction(func.time));
             else if(func.action == "jump")
@@ -272,6 +274,7 @@ public class Player : MonoBehaviour
             else if(func.action == "move")
                 yield return StartCoroutine(MoveToPosition(func.transform,  func.speed, func.distance));
             Debug.Log(func.action);
+            func.obj.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.39f);
 
             if(dead)
                 break;    
@@ -281,6 +284,7 @@ public class Player : MonoBehaviour
         yield return null;
         isRunning = false;
         Debug.Log("Koniec essa");
+        panelInGame.SetActive(false);
         if(koniec == false)
             RestartLevel();
     }
@@ -299,6 +303,8 @@ public class Player : MonoBehaviour
         else if(col.gameObject.tag == "Finish"){
             koniec = true;
             Destroy(gameObject);
+            GameManager.numberOfPassedLevels++;
+            gm.SaveData(GameManager.numberOfPassedLevels);
             gm.nextScene();
         }
 
@@ -306,6 +312,9 @@ public class Player : MonoBehaviour
             ps.Play();
             RestartLevel();
         }
+    }
+    public void LoadLevel(int level){
+        gm.LoadLevel(level);
     }
 
     public void RestartLevel(){
@@ -369,7 +378,7 @@ public class Player : MonoBehaviour
          }
         // obj = chosenMovesButtons[positionToRemove].obj;
          SpeedChangeSlider.value = chosenMovesButtons[positionToRemove].speed;
-         DistanceChangeSlider.value = chosenMovesButtons[positionToRemove].distance; 
+         DistanceChangeSlider.value = chosenMovesButtons[positionToRemove].distance*4; 
          ChangeSpeedText.text = chosenMovesButtons[positionToRemove].speed.ToString();
          ChangeDistanceText.text = chosenMovesButtons[positionToRemove].distance.ToString();
 
