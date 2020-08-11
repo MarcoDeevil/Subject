@@ -234,17 +234,31 @@ public class Player : MonoBehaviour
 
     public IEnumerator MoveToPosition (Transform obj, float speed, float distance){
      // speed should be 1 unit per second
+     bool flaga = false;
      Debug.Log("zaczunam isc");
      Vector3 end = transform.position + new Vector3(distance,0,0);
      while (obj.position != end)
      {
+         if(flaga)
+            break;
          if(dead)
             break;
-        if(isGrounded == false){
+        if(isGrounded == false && !flaga){
+            flaga = true;
             Vector3 dir = new Vector3(0,0,0);
-            dir = Quaternion.AngleAxis(0, Vector3.forward) * Vector3.right;
+            if(distance>0)
+                dir = Quaternion.AngleAxis(0, Vector3.forward) * Vector3.right;
+            else if(distance<0)
+                dir = Quaternion.AngleAxis(0, Vector3.forward) * Vector3.left;
             rb.AddForce(dir*speed*50);
-            break;
+            while(!isGrounded){
+            yield return null;
+         }
+         if(isGrounded){
+                rb.velocity = Vector2.zero;
+                break;
+            }
+         
           }        
          obj.position = Vector3.MoveTowards(obj.transform.position, end, speed * Time.deltaTime);
          yield return null;
@@ -394,6 +408,7 @@ public class Player : MonoBehaviour
                  positionToRemove = i;
              }
          }
+         if(float.Parse(ChangeDistanceText.text) != 0){
         chosenMovesButtons[positionToRemove].speed = int.Parse(ChangeSpeedText.text);
         chosenMovesButtons[positionToRemove].distance = float.Parse(ChangeDistanceText.text)/4;
 
@@ -401,6 +416,7 @@ public class Player : MonoBehaviour
         obj.transform.Find("ChosenCardMove/DistanceValue").gameObject.GetComponent<TextMeshProUGUI>().text = ChangeDistanceText.text;
         ChangeMoveCard.SetActive(false);
         CoverButton.SetActive(false);
+         }
     }
 
     public void JumpChange(GameObject obj){
