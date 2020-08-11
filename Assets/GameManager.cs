@@ -7,6 +7,13 @@ public class GameManager : MonoBehaviour
 {
     int currentScene = 0;
     public static GameManager instance;
+    List<Level> levels = new List<Level>();
+
+    class Level {
+        int level;
+        int attempt;
+        bool blocked;
+    }
     // Start is called before the first frame update
     void Start()
     {

@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
-
+    public ParticleSystem ps;
     delegate void Del();
     Del del;
     float posY = -252;
@@ -27,6 +27,13 @@ public class Player : MonoBehaviour
     public TextMeshProUGUI ChangeAngleText;
     public TextMeshProUGUI ChangeSpeedText;
     public TextMeshProUGUI ChangeDistanceText;
+
+    public Slider PowerChangeSlider;
+    public Slider AngleChangeSlider;
+    public Slider SpeedChangeSlider;
+    public Slider DistanceChangeSlider;
+    public Slider TimeChangeSlider;
+
 
     [Serializable]
     public class MoveButton {
@@ -104,6 +111,8 @@ public class Player : MonoBehaviour
     }
     void Update()
     {
+        if(!dead)
+            ps.transform.position = transform.position;
         t += Time.deltaTime/time;
         isGrounded = Physics2D.OverlapCircle(feetPos.position, checkRadius, whatisGround);
     }
@@ -205,6 +214,9 @@ public class Player : MonoBehaviour
          while(!isGrounded){
             yield return null;
          }
+
+         if(isGrounded)
+            rb.velocity = Vector2.zero;
          yield return null;
          //yield break;
          Debug.Log("Koniec skoku");
@@ -289,12 +301,17 @@ public class Player : MonoBehaviour
             Destroy(gameObject);
             gm.nextScene();
         }
+
+        else if(col.gameObject.tag == "Saw"){
+            ps.Play();
+            RestartLevel();
+        }
     }
 
     public void RestartLevel(){
         dead = true;
         transform.position = spawn;
-        rb.velocity = Vector3.zero;
+        rb.velocity = Vector2.zero;
         rb.angularVelocity = 0;
     }
 
@@ -316,6 +333,7 @@ public class Player : MonoBehaviour
                  positionToRemove = i;
              }
          }
+         TimeChangeSlider.value = chosenMovesButtons[positionToRemove].time;
          //obj = chosenMovesButtons[positionToRemove].obj;
          ChangeTimeText.text = chosenMovesButtons[positionToRemove].time.ToString();
 
@@ -350,6 +368,8 @@ public class Player : MonoBehaviour
              }
          }
         // obj = chosenMovesButtons[positionToRemove].obj;
+         SpeedChangeSlider.value = chosenMovesButtons[positionToRemove].speed;
+         DistanceChangeSlider.value = chosenMovesButtons[positionToRemove].distance; 
          ChangeSpeedText.text = chosenMovesButtons[positionToRemove].speed.ToString();
          ChangeDistanceText.text = chosenMovesButtons[positionToRemove].distance.ToString();
 
@@ -377,16 +397,17 @@ public class Player : MonoBehaviour
     public void JumpChange(GameObject obj){
         ChangeJumpCard.SetActive(true);
         CoverButton.SetActive(true);
-        CoverButton.GetComponent<Image>().color = new Color(73/255f,187/255f,217/255f,108/255f);  
+       // CoverButton.GetComponent<Image>().color = new Color(73/255f,187/255f,217/255f,108/255f);  
         int positionToRemove = 0;
          for(int i = 0; i<chosenMovesButtons.Count; i++){
              if(chosenMovesButtons[i].obj == obj){
                  positionToRemove = i;
+                 ChangePowerText.text = chosenMovesButtons[i].power.ToString();
+                 ChangeAngleText.text = chosenMovesButtons[i].angle.ToString();
+                 PowerChangeSlider.value = chosenMovesButtons[i].power;
+                 AngleChangeSlider.value = chosenMovesButtons[i].angle;
              }
          }
-         //obj = chosenMovesButtons[positionToRemove].obj;
-         ChangePowerText.text = chosenMovesButtons[positionToRemove].power.ToString();
-         ChangeAngleText.text = chosenMovesButtons[positionToRemove].angle.ToString();
 
         Button change = ChangeJumpCard.transform.Find("CardJumpChange/ChangeJumpButton").gameObject.GetComponent<Button>();
         change.onClick.RemoveAllListeners();

@@ -29,7 +29,7 @@ public class Saw : MonoBehaviour
             transform.position = new Vector3(transform.position.x, newY, transform.position.z) ;
         }   
         else if(!up){
-            float newX = Mathf.Sin(Time.time * speed) * height + pos.y;
+            float newX = Mathf.Sin(Time.time * speed) * height + pos.x;
             transform.position = new Vector3(newX, transform.position.y, transform.position.z);
         }
 }
