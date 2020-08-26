@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
     public static int numberOfPassedLevels = 0;
 
     void Update(){
+        Debug.Log(numberOfPassedLevels);
         if(currentScene > 0)
             SideMenu.SetActive(true);
         else

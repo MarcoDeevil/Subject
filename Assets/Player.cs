@@ -18,6 +18,7 @@ public class Player : MonoBehaviour
     public List<MoveButton> chosenMovesButtons;  
     GameObject currentChangedObject;
     public GameObject panelInGame;
+    public int levelID;
 
     public GameObject CoverButton;
     public GameObject ChangeWaitCard;
@@ -237,11 +238,9 @@ public class Player : MonoBehaviour
      bool flaga = false;
      Debug.Log("zaczunam isc");
      Vector3 end = transform.position + new Vector3(distance,0,0);
-     while (obj.position != end)
+     while (obj.position != end && !dead)
      {
          if(flaga)
-            break;
-         if(dead)
             break;
         if(isGrounded == false && !flaga){
             flaga = true;
@@ -317,7 +316,8 @@ public class Player : MonoBehaviour
         else if(col.gameObject.tag == "Finish"){
             koniec = true;
             Destroy(gameObject);
-            GameManager.numberOfPassedLevels++;
+            if(levelID > GameManager.numberOfPassedLevels)
+                GameManager.numberOfPassedLevels++;
             gm.SaveData(GameManager.numberOfPassedLevels);
             gm.nextScene();
         }
@@ -325,6 +325,10 @@ public class Player : MonoBehaviour
         else if(col.gameObject.tag == "Saw"){
             ps.Play();
             RestartLevel();
+        }
+
+        else if(col.gameObject.tag == "LastFinish"){
+            col.gameObject.GetComponent<LastLevelFinish>().panel.SetActive(true);
         }
     }
     public void LoadLevel(int level){
@@ -514,7 +518,7 @@ public class Player : MonoBehaviour
                 newButton.transform.Find("ChosenCardJump/AngleValue").gameObject.GetComponent<TextMeshProUGUI>().text = chosenMovesButtons[i].angle.ToString();
                 newButton.transform.SetParent(Canvas.transform, false);
                 Button copy = newButton.transform.Find("CopyButton").gameObject.GetComponent<Button>();
-                copy.onClick.AddListener(() => CopyMoveCard(newButton));
+                copy.onClick.AddListener(() => CopyJumpCard(newButton));
                 Button delete = newButton.transform.Find("Button").gameObject.GetComponent<Button>();
                 delete.onClick.AddListener(() => RearangeChosenMovesButtons(newButton));
                 Button card = newButton.transform.Find("ChosenCardJump").gameObject.GetComponent<Button>();

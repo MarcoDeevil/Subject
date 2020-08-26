@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Bound
   - Saw
+  - LastFinish
   layers:
   - Default
   - TransparentFX
